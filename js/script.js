@@ -68,36 +68,144 @@ function createRow(flightData) {
     table_flights.appendChild(row);
 }
 // // fetch the data from the API Menues
-// const selectedRegion = )];
-// const menueRegions = await loadMenueRegions(selectedRegion);
-// const allRegions = ["Irish", "American", "British", "Canadian", "Chinese", "Croatian", "Dutch", "Egyptian", "Filipino", "French", "Greek", "Indian", "Irish", "Italian", "Jamaican", "Japanese", "Kenyan", "Malaysian", "Mexican", "Moroccan", "Polish", "Portuguese", "Russian", "Spanish", "Thai", "Tunisian", "Turkish", "Ukrainian", "Uruguayan", "Vietnamese",];
-// const randomMenue = await menueRegions[Math.floor(Math.random() * menueRegions.length)];
-
-
-// console.log(randomMenue);
-
-
+// // const selectedRegion = )];
 // async function loadMenueRegions(region) {
-//     const url =`https://www.themealdb.com/api/json/v1/1/filter.php?a=${region}`;
+//     const url = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${region}`;
 //     try {
 //         const response = await fetch(url);
 //         const answer = await response.json();
-//         return answer;
+//         return answer.meals; // ✅ return just the array of meals
+//     } catch (error) {
+//         console.error(error);
+//         return [];
+//     }
+// }
+
+// (async () => {
+//     const menueRegions = await loadMenueRegions("American");
+
+//     if (menueRegions.length > 0) {
+//         const randomIndex = Math.floor(Math.random() * menueRegions.length);
+//         const randomMenue = menueRegions[randomIndex];
+
+//         console.log("Random American meal:", randomMenue);
+//         // Optional: fetch full meal details by ID
+//         // const fullDetails = await loadMenueDetails(randomMenue.idMeal);
+//     } 
+// })();
+
+
+// let menueId = "52772";// Example meal ID, replace with the one you want to fetch
+// // Fetch the data from the API Menues
+// async function loadMenueDetails(menueId) {
+//     const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${menueId}`;
+//     try {
+//         const response = await fetch(url);
+//         const data = await response.json();
+//         return data.meals[0]; // The actual meal data
 //     } catch (error) {
 //         console.error(error);
 //         return false;
 //     }
-// } 
-// console.log(menueRegions);
+// }
 
-// // Filter the data to get only the relevant information
-// let menueDescription = [];
-// menueRegions.forEach(answer => {
-//     menueDescription.push({
-//         name: answer.strMeal,
-//         instructions: answer.strInstructions,
-//         image: answer.strMealThumb,
-//         ingredients: answer.strIngredient[?],
-//         measurements: answer.strMeasure[?]
+// // Filter the data to get only the relevant
+// let menueInfos = [];
+
+// loadMenueDetails(menueId).then(meal => {
+//     if (meal) {
+//         menueInfos.push({
+//             name: meal.strMeal,
+//             instructions: meal.strInstructions,
+//             image: meal.strMealThumb,
+//             // To get all ingredients:
+//             ingredients: getIngredients(meal)
+//         });
+
+//         console.log(menueInfos);
+//     }
 // });
-// });
+
+// // Helper to extract ingredients and measures
+// function getIngredients(meal) {
+//     const ingredients = [];
+//     for (let i = 1; i <= 20; i++) {
+//         const ingredient = meal[`strIngredient${i}`];
+//         const measure = meal[`strMeasure${i}`];
+//         if (ingredient && ingredient.trim() !== "") {
+//             ingredients.push(`${measure} ${ingredient}`);
+//         }
+//     }
+//     return ingredients;
+// }
+
+// Fetch meals by region 
+async function loadMenueRegions(region) {
+    const url = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${region}`;
+    try {
+        const response = await fetch(url);
+        const answer = await response.json();
+        return answer.meals;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
+// Fetch full meal details by ID
+async function loadMenueDetails(menueId) {
+    const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${menueId}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.meals[0]; // The meal object
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+// Helper to extract ingredients and measurements
+function getIngredients(meal) {
+    const ingredients = [];
+    for (let i = 1; i <= 20; i++) {
+        const ingredient = meal[`strIngredient${i}`];
+        const measure = meal[`strMeasure${i}`];
+        if (ingredient && ingredient.trim()) {
+            ingredients.push(`${measure} ${ingredient}`);
+        }
+    }
+    return ingredients;
+}
+
+// Test with region "American"
+(async () => {
+    const region = "American";
+    const meals = await loadMenueRegions(region);
+    
+    if (meals.length === 0) {
+        console.log("No meals found for region:", region);
+        return;
+    }
+
+    // Pick a random meal from the region
+    const randomMeal = meals[Math.floor(Math.random() * meals.length)];
+    console.log("Random meal from", region, "region:");
+    console.log(randomMeal);
+
+    // Fetch detailed info
+    const mealDetails = await loadMenueDetails(randomMeal.idMeal);
+    if (!mealDetails) {
+        console.log("Failed to load meal details.");
+        return;
+    }
+
+    const fullMealInfo = {
+        name: mealDetails.strMeal,
+        instructions: mealDetails.strInstructions,
+        image: mealDetails.strMealThumb,
+        ingredients: getIngredients(mealDetails)
+    };
+
+    console.log(fullMealInfo);
+})();
