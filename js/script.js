@@ -30,7 +30,7 @@ departureZurich.forEach(answer => {
         flightsign: answer.callsign
 });
 });
-//Loop through the array and create a table row for each flight
+//Loop das alle Flüge ohne Enddestination nicht angezeit werden
 alldeparture.forEach(flightData => {
     if (flightData.destination !== null) {
         createRow(flightData);
@@ -67,18 +67,37 @@ function createRow(flightData) {
 
     table_flights.appendChild(row);
 }
-// fetch the data from the API Menues
-const menueRegions = await loadMenueRegions();
+// // fetch the data from the API Menues
+// const selectedRegion = )];
+// const menueRegions = await loadMenueRegions(selectedRegion);
+// const allRegions = ["Irish", "American", "British", "Canadian", "Chinese", "Croatian", "Dutch", "Egyptian", "Filipino", "French", "Greek", "Indian", "Irish", "Italian", "Jamaican", "Japanese", "Kenyan", "Malaysian", "Mexican", "Moroccan", "Polish", "Portuguese", "Russian", "Spanish", "Thai", "Tunisian", "Turkish", "Ukrainian", "Uruguayan", "Vietnamese",];
+// const randomMenue = await menueRegions[Math.floor(Math.random() * menueRegions.length)];
 
-async function loadMenueRegions() {
-    const url =`https://www.themealdb.com/api/json/v1/1/filter.php?a=irish`;
-    try {
-        const response = await fetch(url);
-        const answer = await response.json();
-        return answer;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
-} 
-console.log(menueRegions);
+
+// console.log(randomMenue);
+
+
+// async function loadMenueRegions(region) {
+//     const url =`https://www.themealdb.com/api/json/v1/1/filter.php?a=${region}`;
+//     try {
+//         const response = await fetch(url);
+//         const answer = await response.json();
+//         return answer;
+//     } catch (error) {
+//         console.error(error);
+//         return false;
+//     }
+// } 
+// console.log(menueRegions);
+
+// // Filter the data to get only the relevant information
+// let menueDescription = [];
+// menueRegions.forEach(answer => {
+//     menueDescription.push({
+//         name: answer.strMeal,
+//         instructions: answer.strInstructions,
+//         image: answer.strMealThumb,
+//         ingredients: answer.strIngredient[?],
+//         measurements: answer.strMeasure[?]
+// });
+// });
