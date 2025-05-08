@@ -111,11 +111,11 @@ function createRow(flightData) {
 
     cell3.innerText = flightData.destination;
     cell4.innerText = flightData.flightsign;
-    // cell5.inner = .add("button").innerText = "Get Menue";
+
     let button = document.createElement("button")
     button.innerText = "Go!";
     button.addEventListener("click", async () => {
-        console.log(flightData );
+        // Region wird vom Land des Fluges geholt
         let region = getRegion(flightData.country);
         let meals = await loadMenueRegions(region);
         console.log(meals,region);
@@ -124,30 +124,55 @@ function createRow(flightData) {
     const randomMeal = meals[Math.floor(Math.random() * meals.length)];
     // load Details from random meal 
     const mealDetails = await loadMenueDetails(randomMeal.idMeal);
-    // Display the meal details
+    
+// ─────────────────────────────────────────────────────────────────────────────
+    //Modal aus dem HTML in den DOM holen
+    let mealModal = document.querySelector("#mealModal");
+    let modalContent = document.querySelector("#modalBody");
+     // Display the meal details
     const fullMealInfo = {
         name: mealDetails.strMeal,
         instructions: mealDetails.strInstructions,
         image: mealDetails.strMealThumb,
         ingredients: getIngredients(mealDetails)
     };
-    console.log(fullMealInfo);
 
-    });
+    //Modal Befüllen mit daten von fullMealInfo
+    modalContent.innerHTML = `
+    <h2>${fullMealInfo.name}</h2>
+    <img src="${fullMealInfo.image}" alt="${fullMealInfo.name}" style="width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 10px;">
+    <h3>Ingredients:</h3>
+    <ul>${fullMealInfo.ingredients.map(ing => `<li>${ing}</li>`).join("")}</ul>
+    <h3>Instructions:</h3>
+    <p>${fullMealInfo.instructions}</p>
+    `;
+    //Modal aufrufen
+    mealModal.classList.remove("hidden");
+
+    //Modal schliessbar machen mit dem X
+    const closeModal = document.querySelector(".modal-close");
+    
+    closeModal.addEventListener("click", () => {
+    const modal = document.getElementById("mealModal");
+    modal.classList.add("hidden");
+});
+});
+    
+    // scheibe den Button in die Zelle
     cell5.appendChild(button);
 
-
+    //schiebt die Zellen in die Zeile
     row.appendChild(cell1);
     row.appendChild(cell2);
     row.appendChild(cell3);
     row.appendChild(cell4);
     row.appendChild(cell5);
-
-
-
+    // Schiebt alle Zeilen in die Tabelle
     table_flights.appendChild(row);
     }
 
+
+// Get Region for every Country
 function getRegion(country) {
     switch (country.trim().toLowerCase()) {
       case "afghanistan":
@@ -648,3 +673,7 @@ function getIngredients(meal) {
     }
     return ingredients;
 }
+
+
+
+
