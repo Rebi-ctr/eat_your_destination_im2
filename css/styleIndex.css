@@ -1,0 +1,77 @@
+/* Default CSS Reset */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    
+    font-family: 'Advent Pro', sans-serif;
+    color: white;
+    padding-bottom: 50px;
+    height: 100%;
+    background-image: url('../Bilder/Background.png');
+    background-size: cover;
+    background-position: center;
+
+}
+
+.destination-hero {
+    padding: 10% ;
+}
+
+h1 {
+    font-family: 'Krungthep', sans-serif;
+    font-size: 2.8rem;
+    color: #fff; 
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: black; 
+}
+
+a {
+    text-decoration: none;
+    color: black;
+    font-family: 'Krungthep', sans-serif;
+    font-size: 1.4rem;
+    background-color: white;
+    padding: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-radius: 20px;
+}
+
+a:hover {
+    background: linear-gradient(to right, #f68d2e, #ff6f00);
+    transition: background-color 0.3s ease;
+}
+
+.Zurich {
+    position: absolute;
+    top: 15%;
+    left: 40%;
+}
+
+.Geneva {
+    position: absolute;
+    top: 60%;
+    left: 1%;
+}
+
+.hero-image{
+    width: 80%; 
+}
+
+.Karte{
+    position: absolute;
+    top: 40%;
+    left: 40%;
+}
+
+
+
+
+

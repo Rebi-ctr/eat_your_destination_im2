@@ -138,14 +138,36 @@ function createRow(flightData) {
     };
 
     //Modal Befüllen mit daten von fullMealInfo
+    // modalContent.innerHTML = `
+    // <h2>${fullMealInfo.name}</h2>
+    // <img src="${fullMealInfo.image}" alt="${fullMealInfo.name}" style="width: 50%; max-height: 300px; object-fit: cover; margin-bottom: 10px;">
+    // <h3>Ingredients:</h3>
+    // <ul>${fullMealInfo.ingredients.map(ing => `<li>${ing}</li>`).join("")}</ul>
+    // <h3>Instructions:</h3>
+    // <p>${fullMealInfo.instructions}</p>
+    // `;
+
     modalContent.innerHTML = `
-    <h2>${fullMealInfo.name}</h2>
-    <img src="${fullMealInfo.image}" alt="${fullMealInfo.name}" style="width: 100%; max-height: 300px; object-fit: cover; margin-bottom: 10px;">
-    <h3>Ingredients:</h3>
-    <ul>${fullMealInfo.ingredients.map(ing => `<li>${ing}</li>`).join("")}</ul>
-    <h3>Instructions:</h3>
-    <p>${fullMealInfo.instructions}</p>
-    `;
+    <div class="modal-header">
+      <h2>${fullMealInfo.name}</h2>
+    </div>
+  
+    <div class="modal-body-row">
+      <div class="ingredients-block">
+        <h3>Ingredients:</h3>
+        <ul>${fullMealInfo.ingredients.map(ing => `<li>${ing}</li>`).join("")}</ul>
+      </div>
+      <div class="image-block">
+        <img src="${fullMealInfo.image}" alt="${fullMealInfo.name}">
+      </div>
+    </div>
+  
+    <div class="modal-instructions">
+      <h3>Instructions:</h3>
+      <p>${fullMealInfo.instructions}</p>
+    </div>
+  `;
+
     //Modal aufrufen
     mealModal.classList.remove("hidden");
 
