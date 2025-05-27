@@ -22,19 +22,29 @@ const airportMap = await loadAirportMap();
 let alldeparture = [];
 
 departureZurich.forEach(answer => {
-    let destinationName = airportMap[answer.estArrivalAirport] || answer.estArrivalAirport;
+    const icao = answer.estArrivalAirport;
+    const destinationName = airportMap[icao];
 
-    if (destinationName !== null) {
-        const splitted_destination = destinationName.split(","); // So mache ich ein Array aus dem String
-        alldeparture.push({
-            arrival: answer.firstSeen,
-            departure: answer.lastSeen,
-            destination: destinationName,
-            flightsign: answer.callsign,
-            country: splitted_destination[1]?.trim(), // Hier wird nur 2. Element des Arrays genommen (Land)
-        });
-    }
+    // Skip if no city+country in airport map
+    if (!destinationName) return;
 
+    // Skip if destination is Zurich, Switzerland
+    if (destinationName.trim().toLowerCase() === "zurich, switzerland") return;
+
+    const splitted_destination = destinationName.split(",");
+    const city = splitted_destination[0]?.trim();
+    const country = splitted_destination[1]?.trim();
+
+    // Extra safety: ignore if city or country is missing
+    if (!city || !country) return;
+
+    alldeparture.push({
+        arrival: answer.firstSeen,
+        departure: answer.lastSeen,
+        destination: `${city}, ${country}`,
+        flightsign: answer.callsign,
+        country: country
+    });
 });
 
 // Filter and display flights with destination
@@ -50,8 +60,21 @@ alldeparture.forEach(flightData => {
 
 // 5.1 Load Flights from API
 async function loadDepartureZurich(startTime, endTime) {
-    // const url =`https://opensky-network.org/api/flights/departure?airport=LSZH&begin=${startTime}&end=${endTime}`;
-    const url = `json/flights.json`;
+    const url =`https://opensky-network.org/api/flights/departure?airport=LSZH&begin=${startTime}&end=${endTime}`;
+    // const url = `json/flights.json`;
+    try {
+        const response = await fetch(url);
+        const answer = await response.json();
+        return answer;
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
+async function loadDepartureGeneva(startTime, endTime) {
+    const url = `https://opensky-network.org/api/flights/departure?airport=LSGG&begin=${startTime}&end=${endTime}`;
+    // const url = `json/flights.json`;
     try {
         const response = await fetch(url);
         const answer = await response.json();
@@ -138,15 +161,6 @@ function createRow(flightData) {
     };
 
     //Modal Befüllen mit daten von fullMealInfo
-    // modalContent.innerHTML = `
-    // <h2>${fullMealInfo.name}</h2>
-    // <img src="${fullMealInfo.image}" alt="${fullMealInfo.name}" style="width: 50%; max-height: 300px; object-fit: cover; margin-bottom: 10px;">
-    // <h3>Ingredients:</h3>
-    // <ul>${fullMealInfo.ingredients.map(ing => `<li>${ing}</li>`).join("")}</ul>
-    // <h3>Instructions:</h3>
-    // <p>${fullMealInfo.instructions}</p>
-    // `;
-
     modalContent.innerHTML = `
     <div class="modal-header">
       <h2>${fullMealInfo.name}</h2>
@@ -167,7 +181,6 @@ function createRow(flightData) {
       <p>${fullMealInfo.instructions}</p>
     </div>
   `;
-
     //Modal aufrufen
     mealModal.classList.remove("hidden");
 
