@@ -13,7 +13,7 @@ let table_flights = document.querySelector("#Tabelle_Fluege");
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. Load Flights and Airport Map
 // ─────────────────────────────────────────────────────────────────────────────
-const departureZurich = await loadDepartureZurich(startTimecode, endTimecode);
+const departureGeneva = await loadDepartureGeneva(startTimecode, endTimecode);
 const airportMap = await loadAirportMap();
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ const airportMap = await loadAirportMap();
 // ─────────────────────────────────────────────────────────────────────────────
 let alldeparture = [];
 
-departureZurich.forEach(answer => {
+departureGeneva.forEach(answer => {
     const icao = answer.estArrivalAirport;
     const destinationName = airportMap[icao];
 
@@ -29,7 +29,7 @@ departureZurich.forEach(answer => {
     if (!destinationName) return;
 
     // Skip if destination is Zurich, Switzerland
-    if (destinationName.trim().toLowerCase() === "zurich, switzerland") return;
+    if (destinationName.trim().toLowerCase() === "geneva, switzerland") return;
 
     const splitted_destination = destinationName.split(",");
     const city = splitted_destination[0]?.trim();
@@ -61,9 +61,9 @@ alldeparture.forEach(flightData => {
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. Main Functions
 // ─────────────────────────────────────────────────────────────────────────────
-async function loadDepartureZurich(startTime, endTime) {
-    // const url = `https://opensky-network.org/api/flights/departure?airport=LSZH&begin=${startTime}&end=${endTime}`;
-    const url = `json/flights.json`; // For testing purposes, using a local JSON file
+async function loadDepartureGeneva(startTime, endTime) {
+    // const url = `https://opensky-network.org/api/flights/departure?airport=LSGG&begin=${startTime}&end=${endTime}`;
+    const url = `json/flights.json`; // Wenn die API nicht erreichbar wäre bitte mit diesen Dummy Daten arbeiten!
     try {
         const response = await fetch(url);
         return await response.json();

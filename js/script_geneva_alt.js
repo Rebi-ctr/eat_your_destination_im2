@@ -1,9 +1,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. Time Setup
 // ─────────────────────────────────────────────────────────────────────────────
-let now = Math.floor(Date.now() / 1000);
-let endTimecode = now + (12 * 60 * 60);
-let startTimecode = now - (20 * 60 * 60);
+let now = Math.floor(Date.now() / 1000); // current time in Unix timestamp (seconds)
+let endTimecode = now + (12 * 60 * 60);   // 12 hours ahead
+let startTimecode = now - (20 * 60 * 60); // 12 hours ago
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 2. DOM Element
@@ -13,7 +13,7 @@ let table_flights = document.querySelector("#Tabelle_Fluege");
 // ─────────────────────────────────────────────────────────────────────────────
 // 3. Load Flights and Airport Map
 // ─────────────────────────────────────────────────────────────────────────────
-const departureZurich = await loadDepartureZurich(startTimecode, endTimecode);
+const departureGeneva = await loadDepartureGeneva(startTimecode, endTimecode);
 const airportMap = await loadAirportMap();
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ const airportMap = await loadAirportMap();
 // ─────────────────────────────────────────────────────────────────────────────
 let alldeparture = [];
 
-departureZurich.forEach(answer => {
+departureGeneva.forEach(answer => {
     const icao = answer.estArrivalAirport;
     const destinationName = airportMap[icao];
 
@@ -29,7 +29,7 @@ departureZurich.forEach(answer => {
     if (!destinationName) return;
 
     // Skip if destination is Zurich, Switzerland
-    if (destinationName.trim().toLowerCase() === "zurich, switzerland") return;
+    if (destinationName.trim().toLowerCase() === "geneva, switzerland") return;
 
     const splitted_destination = destinationName.split(",");
     const city = splitted_destination[0]?.trim();
@@ -59,20 +59,23 @@ alldeparture.forEach(flightData => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// 5. Main Functions
+// 5. Functions
 // ─────────────────────────────────────────────────────────────────────────────
-async function loadDepartureZurich(startTime, endTime) {
-    // const url = `https://opensky-network.org/api/flights/departure?airport=LSZH&begin=${startTime}&end=${endTime}`;
-    const url = `json/flights.json`; // For testing purposes, using a local JSON file
+
+async function loadDepartureGeneva(startTime, endTime) {
+    // const url = `https://opensky-network.org/api/flights/departure?airport=LSGG&begin=${startTime}&end=${endTime}`;
+    const url = `json/flights.json`; // Wenn die API nicht erreichbar wäre bitte mit diesen Dummy Daten arbeiten!
     try {
         const response = await fetch(url);
-        return await response.json();
+        const answer = await response.json();
+        return answer;
     } catch (error) {
         console.error(error);
         return false;
     }
 }
 
+// 5.2 Load ICAO → "City, Country" Map
 async function loadAirportMap() {
     const url = "https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports-extended.dat";
     const response = await fetch(url);
@@ -83,6 +86,7 @@ async function loadAirportMap() {
 
     lines.forEach(line => {
         const fields = line.split(',');
+
         const city = fields[2]?.replaceAll('"', '');
         const country = fields[3]?.replaceAll('"', '');
         const icao = fields[5]?.replaceAll('"', '');
@@ -95,6 +99,7 @@ async function loadAirportMap() {
     return map;
 }
 
+// 5.3 Create a Table Row for a Flight
 function createRow(flightData) {
     let row = document.createElement("tr");
     let cell1 = document.createElement("td");
@@ -103,40 +108,41 @@ function createRow(flightData) {
     let cell4 = document.createElement("td");
     let cell5 = document.createElement("td");
 
-    cell1.innerText = formatTime(flightData.arrival);
-    cell1.classList.add("arrival-col");
-    
-    cell2.innerText = formatTime(flightData.departure);
-    
-    cell3.innerText = flightData.destination;
-    
-    cell4.innerText = flightData.flightsign;
-    cell4.classList.add("callsign-col");
-
-    let button = document.createElement("button");
-    button.innerText = "Go!";
-    button.addEventListener("click", () => handleButtonClick(flightData, button));
-
-    cell5.appendChild(button);
-    row.append(cell1, cell2, cell3, cell4, cell5);
-    table_flights.appendChild(row);
-}
-
-function formatTime(unixTime) {
-    return new Date(unixTime * 1000).toLocaleTimeString("en-GB", {
+    cell1.innerText = new Date(flightData.arrival * 1000).toLocaleTimeString("en-GB", {
         timeZone: "Europe/Zurich",
         hour: '2-digit',
         minute: '2-digit',
         hour12: false
     });
-}
 
-async function handleButtonClick(flightData, button) {
-    const region = getRegion(flightData.country);
-    const meals = await loadMenueRegions(region);
+    cell2.innerText = new Date(flightData.departure * 1000).toLocaleTimeString("en-GB", {
+        timeZone: "Europe/Zurich",
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    cell3.innerText = flightData.destination;
+    cell4.innerText = flightData.flightsign;
+
+    let button = document.createElement("button")
+    button.innerText = "Go!";
+    button.addEventListener("click", async () => {
+        // Region wird vom Land des Fluges geholt
+        let region = getRegion(flightData.country);
+        let meals = await loadMenueRegions(region);
+        console.log(meals,region);
+
+    // Pick a random meal from the region
     const randomMeal = meals[Math.floor(Math.random() * meals.length)];
+    // load Details from random meal 
     const mealDetails = await loadMenueDetails(randomMeal.idMeal);
-
+    
+// ─────────────────────────────────────────────────────────────────────────────
+    //Modal aus dem HTML in den DOM holen
+    let mealModal = document.querySelector("#mealModal");
+    let modalContent = document.querySelector("#modalBody");
+     // Display the meal details
     const fullMealInfo = {
         name: mealDetails.strMeal,
         instructions: mealDetails.strInstructions,
@@ -144,13 +150,12 @@ async function handleButtonClick(flightData, button) {
         ingredients: getIngredients(mealDetails)
     };
 
-    let modal = document.querySelector("#mealModal");
-    let modalContent = document.querySelector("#modalBody");
-
+    //Modal Befüllen mit daten von fullMealInfo
     modalContent.innerHTML = `
     <div class="modal-header">
       <h2>${fullMealInfo.name}</h2>
     </div>
+  
     <div class="modal-body-row">
       <div class="ingredients-block">
         <h3>Ingredients:</h3>
@@ -160,22 +165,38 @@ async function handleButtonClick(flightData, button) {
         <img src="${fullMealInfo.image}" alt="${fullMealInfo.name}">
       </div>
     </div>
+  
     <div class="modal-instructions">
       <h3>Instructions:</h3>
       <p>${fullMealInfo.instructions}</p>
     </div>
-    `;
+  `;
+    //Modal aufrufen
+    mealModal.classList.remove("hidden");
 
-    modal.classList.remove("hidden");
+    //Modal schliessbar machen mit dem X
+    const closeModal = document.querySelector(".modal-close");
+    
+    closeModal.addEventListener("click", () => {
+    const modal = document.getElementById("mealModal");
+    modal.classList.add("hidden");
+});
+});
+    
+    // scheibe den Button in die Zelle
+    cell5.appendChild(button);
 
-    document.querySelector(".modal-close").addEventListener("click", () => {
-        modal.classList.add("hidden");
-    });
-}
+    //schiebt die Zellen in die Zeile
+    row.appendChild(cell1);
+    row.appendChild(cell2);
+    row.appendChild(cell3);
+    row.appendChild(cell4);
+    row.appendChild(cell5);
+    // Schiebt alle Zeilen in die Tabelle
+    table_flights.appendChild(row);
+    }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 6. Helper Functions
-// ─────────────────────────────────────────────────────────────────────────────
+
 // Get Region for every Country
 function getRegion(country) {
     switch (country.trim().toLowerCase()) {
@@ -196,7 +217,7 @@ function getRegion(country) {
       case "armenia":
           return "Russian";
       case "austria":
-          return "Dutch";
+          return "German";
       case "azerbaijan":
           return "Turkish";
       case "bahrain":
@@ -638,6 +659,7 @@ function getRegion(country) {
     }
   }
 
+// Fetch meals by region 
 async function loadMenueRegions(region) {
     const url = `https://www.themealdb.com/api/json/v1/1/filter.php?a=${region}`;
     try {
@@ -650,18 +672,21 @@ async function loadMenueRegions(region) {
     }
 }
 
+
+// Fetch full meal details by ID
 async function loadMenueDetails(menueId) {
     const url = `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${menueId}`;
     try {
         const response = await fetch(url);
         const data = await response.json();
-        return data.meals[0];
+        return data.meals[0]; // The meal object
     } catch (error) {
         console.error(error);
         return null;
     }
 }
 
+// Helper to extract ingredients and measurements
 function getIngredients(meal) {
     const ingredients = [];
     for (let i = 1; i <= 20; i++) {
@@ -673,6 +698,7 @@ function getIngredients(meal) {
     }
     return ingredients;
 }
+
 
 
 

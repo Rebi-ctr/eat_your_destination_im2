@@ -1,46 +1,54 @@
-/* Default CSS Reset */
-*{
+/* ─────────────────────────────────────────────────────────────────────────────
+   1. CSS Reset & Base Layout
+───────────────────────────────────────────────────────────────────────────── */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body, html {
-    
+body,
+html {
     font-family: 'Advent Pro', sans-serif;
     color: white;
-    padding-bottom: 50px;
     height: 100%;
+    padding-bottom: 50px;
     background-image: url('../Bilder/Background.png');
     background-size: cover;
     background-position: center;
-
 }
 
-.destination-hero {
-    padding: 10% ;
-}
-
+/* ─────────────────────────────────────────────────────────────────────────────
+   2. Typography
+───────────────────────────────────────────────────────────────────────────── */
 h1 {
     font-family: 'Krungthep', sans-serif;
     font-size: 2.8rem;
-    color: #fff; 
+    color: #fff;
     margin-bottom: 10px;
 }
 
 h2 {
-    color: black; 
+    color: black;
 }
 
+p{
+    font-family: 'Advent Pro', sans-serif;
+    font-size: 1.2rem;
+    color:white;
+    margin-bottom: 20px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   3. Links
+───────────────────────────────────────────────────────────────────────────── */
 a {
     text-decoration: none;
     color: black;
     font-family: 'Krungthep', sans-serif;
     font-size: 1.4rem;
     background-color: white;
-    padding: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 10px 20px;
     border-radius: 20px;
 }
 
@@ -49,6 +57,20 @@ a:hover {
     transition: background-color 0.3s ease;
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   4. Hero & Layout Sections
+───────────────────────────────────────────────────────────────────────────── */
+.destination-hero {
+    padding: 10%;
+}
+
+.hero-image {
+    width: 80%;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   5. Positioning for Labels or Cities
+───────────────────────────────────────────────────────────────────────────── */
 .Zurich {
     position: absolute;
     top: 15%;
@@ -61,14 +83,71 @@ a:hover {
     left: 1%;
 }
 
-.hero-image{
-    width: 80%; 
-}
-
-.Karte{
+.Karte {
     position: absolute;
     top: 40%;
     left: 40%;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   6. Responsive Design
+───────────────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+    body, html {
+        padding-bottom: 30px;
+        background-position: center top;
+    }
+
+    .destination-hero {
+        padding: 40px;
+        text-align: left;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-top: 120px;
+        margin-left: 10px;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    p {
+        font-size: 1rem;
+        margin-left: 10px;
+    }
+
+    a {
+        font-size: 1rem;
+        padding: 6px 14px;
+    }
+
+    .hero-image {
+        width: 100%;
+        padding: 10px;
+    }
+
+    /* Reposition city labels for smaller screens */
+    .Zurich {
+        position: absolute;
+        top: 15%;
+        left: 40%;
+    }
+    
+    .Geneva {
+        position: absolute;
+        top: 60%;
+        left: 1%;
+    }
+    
+    .Karte {
+        position: absolute;
+        top: 50%;
+        left: 10%;
+        right: 10%;
+    }
 }
 
 
