@@ -15,6 +15,8 @@ let table_flights = document.querySelector("#Tabelle_Fluege");
 // ─────────────────────────────────────────────────────────────────────────────
 const departureZurich = await loadDepartureZurich(startTimecode, endTimecode);
 const airportMap = await loadAirportMap();
+let loadingBar = document.querySelector("#loading");
+loadingBar.classList.remove("hidden"); // Show loading bar
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. Process and Display Flights
