@@ -15,6 +15,8 @@ let table_flights = document.querySelector("#Tabelle_Fluege");
 // ─────────────────────────────────────────────────────────────────────────────
 const departureGeneva = await loadDepartureGeneva(startTimecode, endTimecode);
 const airportMap = await loadAirportMap();
+let loadingBar = document.querySelector("#loading");
+loadingBar.classList.remove("hidden"); // Show loading bar
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. Process and Display Flights
@@ -58,12 +60,14 @@ alldeparture.forEach(flightData => {
     }
 });
 
+loadingBar.classList.add("hidden"); // Hide loading bar
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. Main Functions
 // ─────────────────────────────────────────────────────────────────────────────
 async function loadDepartureGeneva(startTime, endTime) {
-    // const url = `https://opensky-network.org/api/flights/departure?airport=LSGG&begin=${startTime}&end=${endTime}`;
-    const url = `json/flights.json`; // Wenn die API nicht erreichbar wäre bitte mit diesen Dummy Daten arbeiten!
+    const url = `https://opensky-network.org/api/flights/departure?airport=LSGG&begin=${startTime}&end=${endTime}`;
+    //const url = `json/flights.json`; Wenn die API nicht erreichbar wäre bitte mit diesen Dummy Daten arbeiten!
     try {
         const response = await fetch(url);
         return await response.json();
@@ -114,7 +118,7 @@ function createRow(flightData) {
     cell4.classList.add("callsign-col");
 
     let button = document.createElement("button");
-    button.innerText = "Go!";
+    button.innerText = "GO!";
     button.addEventListener("click", () => handleButtonClick(flightData, button));
 
     cell5.appendChild(button);

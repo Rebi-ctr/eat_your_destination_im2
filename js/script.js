@@ -60,12 +60,14 @@ alldeparture.forEach(flightData => {
     }
 });
 
+loadingBar.classList.add("hidden"); // Hide loading bar
+
 // ─────────────────────────────────────────────────────────────────────────────
 // 5. Main Functions
 // ─────────────────────────────────────────────────────────────────────────────
 async function loadDepartureZurich(startTime, endTime) {
-    // const url = `https://opensky-network.org/api/flights/departure?airport=LSZH&begin=${startTime}&end=${endTime}`;
-    const url = `json/flights.json`; // For testing purposes, using a local JSON file
+    const url = `https://opensky-network.org/api/flights/departure?airport=LSZH&begin=${startTime}&end=${endTime}`;
+    //const url = `json/flights.json`; Wenn die API nicht erreichbar wäre bitte mit diesen Dummy Daten arbeiten!
     try {
         const response = await fetch(url);
         return await response.json();
@@ -116,7 +118,7 @@ function createRow(flightData) {
     cell4.classList.add("callsign-col");
 
     let button = document.createElement("button");
-    button.innerText = "Go!";
+    button.innerText = "GO!";
     button.addEventListener("click", () => handleButtonClick(flightData, button));
 
     cell5.appendChild(button);
