@@ -21,7 +21,7 @@
 
 body,
 html {
-    font-family: 'Advent Pro', sans-serif;
+    font-family: 'Advent Pro';
     color: white;
     height: 100%;
     padding-bottom: 50px;
@@ -35,9 +35,10 @@ html {
 ───────────────────────────────────────────────────────────────────────────── */
 
 h1 {
-    font-family: 'Krungthep', sans-serif;
+    font-family: 'Krungthep';
     color: #fff;
     margin-bottom: 10px;
+    font-size: 2.8rem;
 }
 
 h2 {
@@ -45,7 +46,7 @@ h2 {
 }
 
 p{
-    font-family: 'Advent Pro' sans-serif;
+    font-family: 'Advent Pro';
     font-size: 1.2rem;
     color:white;
     margin-bottom: 20px;
@@ -58,7 +59,7 @@ p{
 a {
     text-decoration: none;
     color: black;
-    font-family: 'Krungthep', sans-serif;
+    font-family: 'Krungthep';
     font-size: 1.4rem;
     background-color: white;
     padding: 10px 20px;
@@ -157,7 +158,7 @@ a:hover {
     
     .Karte {
         position: absolute;
-        top: 40%;
+        top: 45%;
         left: 5%;
         right: 5%;
     }
